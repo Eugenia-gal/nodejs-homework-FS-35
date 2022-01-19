@@ -8,7 +8,7 @@ import contacts from "./contacts.json";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const contactsPath = path.join(__dirname, /*"/model",*/ "/contacts.json");
+const contactsPath = path.join(__dirname, /*"/model",*/ "contacts.json");
 
 async function listContacts() {
   return contacts;
@@ -31,23 +31,25 @@ async function removeContact(contactId) {
   const updatedContacts = contacts.filter(
     (contact) => contact.id !== contactId
   );
-  await fs.writeFile(contactsPath, JSON.stringify(updatedContacts, null, 2));
-  return updatedContacts;
+  if (updatedContacts.length !== contacts.length) {
+    const index = contacts.findIndex((contact) => contact.id === contactId);
+    const [deletedContact] = contacts.splice(index, 1);
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    return deletedContact;
+  }
+  return null;
 }
 
-const updateContact = async (contactId, body) => {
+async function updateContact(contactId, body) {
   const index = contacts.findIndex((contact) => contact.id === contactId);
   if (index !== -1) {
     const updatedContact = { id: contactId, ...contacts[index], ...body };
     contacts[index] = updatedContact;
-    await fs.writeFile(
-      path.join(__dirname, "contacts.json"),
-      JSON.stringify(contacts, null, 2)
-    );
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
     return updatedContact;
   }
   return null;
-};
+}
 
 export default {
   listContacts,

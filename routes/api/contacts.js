@@ -16,7 +16,7 @@ router.get(
     if (contact) {
       return res.status(200).json(contact);
     }
-    res.status(404).json({ message: "Not found" });
+    res.status(404).json({ message: "Contact not found" });
   }
 );
 
@@ -38,12 +38,20 @@ router.delete(
         .status(200)
         .json({ message: `contact with id: ${id} is deleted` });
     }
-    res.status(404).json({ message: "Not found" });
+    res.status(404).json({ message: "Contact not found" });
   }
 );
 
-// router.patch("/:contactId", async (_req, res, _next) => {
-//   res.json({ message: "template message" });
-// });
+router.put(
+  "/:id",
+  /*validateId, validateUpdate,*/ async (req, res, next) => {
+    const { id } = req.params;
+    const contact = await model.updateContact(id, req.body);
+    if (contact) {
+      return res.status(200).json(contact);
+    }
+    res.status(404).json({ message: "Contact not found" });
+  }
+);
 
 export default router;
