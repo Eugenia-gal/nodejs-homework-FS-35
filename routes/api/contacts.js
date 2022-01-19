@@ -9,36 +9,30 @@ router.get("/", async (req, res, next) => {
   res.status(200).json(contacts);
 });
 
-router.get(
-  "/:id",
-  /*validateId,*/ async (req, res, next) => {
-    const { id } = req.params;
-    const contact = await model.getContactById(id);
-    if (contact) {
-      return res.status(200).json(contact);
-    }
-    res.status(404).json({ message: "Not found" });
+router.get("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const contact = await model.getContactById(id);
+  if (contact) {
+    return res.status(200).json(contact);
   }
-);
+  res.status(404).json({ message: "Not found" });
+});
 
 router.post("/", validateCreating, async (req, res, next) => {
   const newContact = await model.addContact(req.body);
   res.status(201).json(newContact);
 });
 
-router.delete(
-  "/:id",
-  /*validateId,*/ async (req, res, next) => {
-    const { id } = req.params;
-    const contact = await model.removeContact(id);
-    if (contact) {
-      return res.status(200).json({ message: `Contact deleted` });
-    }
-    res.status(404).json({ message: "Not found" });
+router.delete("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const contact = await model.removeContact(id);
+  if (contact) {
+    return res.status(200).json({ message: `Contact deleted` });
   }
-);
+  res.status(404).json({ message: "Not found" });
+});
 
-router.put("/:id", /*validateId,*/ validateUpdating, async (req, res, next) => {
+router.put("/:id", validateUpdating, async (req, res, next) => {
   const { id } = req.params;
   const contact = await model.updateContact(id, req.body);
   if (contact) {

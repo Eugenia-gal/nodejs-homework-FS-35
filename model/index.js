@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 import { fileURLToPath } from "url";
 
 import contacts from "./contacts.json";
-// const contacts = JSON.parse(await fs.readFile("./model/contacts.json"));
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +19,6 @@ async function getContactById(contactId) {
 }
 
 async function addContact({ name, email, phone }) {
-  // const contacts = await listContacts();
   const newContact = { id: uuidv4(), name, email, phone };
   contacts.push(newContact);
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
