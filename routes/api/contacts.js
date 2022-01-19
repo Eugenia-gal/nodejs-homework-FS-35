@@ -1,5 +1,6 @@
 import { Router } from "express";
 import model from "../../model/index.js";
+import { validateCreating } from "./validation.js";
 
 const router = new Router();
 
@@ -16,17 +17,14 @@ router.get(
     if (contact) {
       return res.status(200).json(contact);
     }
-    res.status(404).json({ message: "Contact not found" });
+    res.status(404).json({ message: "Not found" });
   }
 );
 
-router.post(
-  "/",
-  /*validateCreate,*/ async (req, res, next) => {
-    const newContact = await model.addContact(req.body);
-    res.status(201).json(newContact);
-  }
-);
+router.post("/", validateCreating, async (req, res, next) => {
+  const newContact = await model.addContact(req.body);
+  res.status(201).json(newContact);
+});
 
 router.delete(
   "/:id",
@@ -34,11 +32,9 @@ router.delete(
     const { id } = req.params;
     const contact = await model.removeContact(id);
     if (contact) {
-      return res
-        .status(200)
-        .json({ message: `contact with id: ${id} is deleted` });
+      return res.status(200).json({ message: `Contact deleted` });
     }
-    res.status(404).json({ message: "Contact not found" });
+    res.status(404).json({ message: "Not found" });
   }
 );
 
@@ -50,7 +46,7 @@ router.put(
     if (contact) {
       return res.status(200).json(contact);
     }
-    res.status(404).json({ message: "Contact not found" });
+    res.status(404).json({ message: "Not found" });
   }
 );
 
