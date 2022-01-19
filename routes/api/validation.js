@@ -14,11 +14,26 @@ const updateSchema = Joi.object({
 
 export async function validateCreating(req, res, next) {
   try {
-    const value = await createSchema.validateAsync(req.body);
+    await createSchema.validateAsync(req.body);
   } catch (err) {
     return res
       .status(400)
       .json({ message: `Field ${err.message.replace(/"/g, "")}` });
+  }
+  next();
+}
+
+export async function validateUpdating(req, res, next) {
+  try {
+    await updateSchema.validateAsync(req.body);
+  } catch (err) {
+    const [{ type }] = err.details;
+    if (type === "object.unknown") {
+      return res
+        .status(400)
+        .json({ message: `Field ${err.message.replace(/"/g, "")}` });
+    }
+    return res.status(400).json({ message: `missing fields` });
   }
   next();
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import model from "../../model/index.js";
-import { validateCreating } from "./validation.js";
+import { validateCreating, validateUpdating } from "./validation.js";
 
 const router = new Router();
 
@@ -38,16 +38,13 @@ router.delete(
   }
 );
 
-router.put(
-  "/:id",
-  /*validateId, validateUpdate,*/ async (req, res, next) => {
-    const { id } = req.params;
-    const contact = await model.updateContact(id, req.body);
-    if (contact) {
-      return res.status(200).json(contact);
-    }
-    res.status(404).json({ message: "Not found" });
+router.put("/:id", /*validateId,*/ validateUpdating, async (req, res, next) => {
+  const { id } = req.params;
+  const contact = await model.updateContact(id, req.body);
+  if (contact) {
+    return res.status(200).json(contact);
   }
-);
+  res.status(404).json({ message: "Not found" });
+});
 
 export default router;
