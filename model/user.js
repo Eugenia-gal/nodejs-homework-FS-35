@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 import { Role } from "../lib/constants.js";
 
 const { Schema, model } = mongoose;
@@ -49,6 +50,14 @@ const userSchema = new Schema(
 
 // TODO:
 
-const User = model("contact", userSchema);
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    const salt = await bcrypt.genSalt(6);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
+});
+
+const User = model("user", userSchema);
 
 export default User;
