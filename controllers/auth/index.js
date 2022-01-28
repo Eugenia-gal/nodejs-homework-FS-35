@@ -20,9 +20,21 @@ async function signupUser(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
+  const { email, password } = req.body;
+  const user = await authService.getUser(email, password);
+  if (!user) {
+    return res.status(HttpCode.UNAUTHORIZED).json({
+      status: "Unauthorized",
+      code: HttpCode.UNAUTHORIZED,
+      data: { message: "Email or password is wrong" },
+    });
+  }
+  const token = authService.getToken(user);
+  await authService.setToken(user.id, token);
+
   res
     .status(HttpCode.OK)
-    .json({ status: "success", code: HttpCode.OK, data: {} });
+    .json({ status: "success", code: HttpCode.OK, data: { token } });
 }
 
 async function logoutUser(req, res, next) {
