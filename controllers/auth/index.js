@@ -8,7 +8,7 @@ async function signupUser(req, res, next) {
   const isUserExist = await authService.isUserExist(email);
   if (isUserExist) {
     return res.status(HttpCode.CONFLICT).json({
-      status: "error",
+      status: "Conflict",
       code: HttpCode.CONFLICT,
       data: { message: "Email in use" },
     });

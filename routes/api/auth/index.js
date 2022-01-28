@@ -5,9 +5,11 @@ import {
   logoutUser,
   getCurrentUser,
 } from "../../../controllers/auth/index.js";
+import { validateCreating } from "./validation.js";
+
 const router = new Router();
 
-router.post("/signup", signupUser);
+router.post("/signup", validateCreating, signupUser);
 
 router.post("/login", loginUser);
 
