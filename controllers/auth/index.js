@@ -38,9 +38,10 @@ async function loginUser(req, res, next) {
 }
 
 async function logoutUser(req, res, next) {
+  await authService.setToken(req.user.id, null);
   res
-    .status(HttpCode.OK)
-    .json({ status: "success", code: HttpCode.OK, data: {} });
+    .status(HttpCode.NO_CONTENT)
+    .json({ status: "No Content", code: HttpCode.NO_CONTENT });
 }
 
 async function getCurrentUser(req, res, next) {
