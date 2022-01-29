@@ -15,7 +15,7 @@ const updateSchema = Joi.object({
   email: Joi.string().email().optional(),
   phone: Joi.string().optional(),
   favorite: Joi.boolean().optional(),
-}).or("name", "email", "phone", "age");
+}).or("name", "email", "phone");
 
 const updateFavoriteSchema = Joi.object({
   favorite: Joi.boolean().required(),

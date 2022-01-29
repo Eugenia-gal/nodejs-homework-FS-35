@@ -12,19 +12,20 @@ import {
   validateUpdating,
   validateUpdatingFavorite,
 } from "./validation.js";
+import guard from "../../../middlewares/guard.js";
 
 const router = new Router();
 
-router.get("/", getContacts);
+router.get("/", guard, getContacts);
 
-router.get("/:id", validateId, getContactById);
+router.get("/:id", [guard, validateId], getContactById);
 
-router.post("/", validateCreating, addContact);
+router.post("/", [guard, validateCreating], addContact);
 
-router.delete("/:id", validateId, removeContact);
+router.delete("/:id", [guard, validateId], removeContact);
 
-router.put("/:id", validateId, validateUpdating, updateContact);
+router.put("/:id", [guard, validateId, validateUpdating], updateContact);
 
-router.patch("/:id/favorite", validateUpdatingFavorite, updateContact);
+router.patch("/:id/favorite", [guard, validateUpdatingFavorite], updateContact);
 
 export default router;
