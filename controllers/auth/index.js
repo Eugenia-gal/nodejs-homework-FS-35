@@ -45,15 +45,7 @@ async function logoutUser(req, res, next) {
 }
 
 async function getCurrentUser(req, res, next) {
-  const user = req.user;
-  if (!user) {
-    return res.status(HttpCode.UNAUTHORIZED).json({
-      status: "Unauthorized",
-      code: HttpCode.UNAUTHORIZED,
-      data: { message: "Not authorized" },
-    });
-  }
-  const { email, subscription } = user;
+  const { email, subscription } = req.user;
   res.status(HttpCode.OK).json({
     status: "success",
     code: HttpCode.OK,
