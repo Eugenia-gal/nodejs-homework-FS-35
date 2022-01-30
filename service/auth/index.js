@@ -35,6 +35,10 @@ class AuthService {
   async setToken(id, token) {
     await Users.updateToken(id, token);
   }
+
+  async setAvatar(id, avatar) {
+    await Users.updateToken(id, avatar);
+  }
 }
 
 export default AuthService;
