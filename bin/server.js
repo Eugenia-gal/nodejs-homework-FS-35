@@ -1,4 +1,3 @@
-// import { mkdir } from "fs/promises";
 import app from "../app.js";
 import db from "../lib/db.js";
 import fs from "fs/promises";
