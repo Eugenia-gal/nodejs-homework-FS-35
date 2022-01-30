@@ -19,9 +19,14 @@ async function addUser(body) {
   return await newUser.save();
 }
 
+async function updateAvatar(id, avatarURL) {
+  return await User.updateOne({ _id: id }, { avatarURL });
+}
+
 export default {
   getUserById,
   getUserByEmail,
   addUser,
   updateToken,
+  updateAvatar,
 };
