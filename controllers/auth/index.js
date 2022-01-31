@@ -1,22 +1,39 @@
 import { HttpCode } from "../../lib/constants.js";
 import AuthService from "../../service/auth/index.js";
+import { EmailService, SenderSendGrid } from "../../service/email/index.js";
 
 const authService = new AuthService();
 
 async function signupUser(req, res, next) {
-  const { email } = req.body;
-  const isUserExist = await authService.isUserExist(email);
-  if (isUserExist) {
-    return res.status(HttpCode.CONFLICT).json({
-      status: "Conflict",
-      code: HttpCode.CONFLICT,
-      data: { message: "Email in use" },
+  try {
+    const { email } = req.body;
+    const isUserExist = await authService.isUserExist(email);
+    if (isUserExist) {
+      return res.status(HttpCode.CONFLICT).json({
+        status: "Conflict",
+        code: HttpCode.CONFLICT,
+        data: { message: "Email in use" },
+      });
+    }
+    const newUser = await authService.createUser(req.body);
+    const emailService = new EmailService(
+      process.env.NODE_ENV,
+      new SenderSendGrid()
+    );
+    const isSend = await emailService.sendVerifyEmail(
+      email,
+      newUser.name,
+      newUser.verificationToken
+    );
+    delete newUser.verificationToken;
+    res.status(HttpCode.OK).json({
+      status: "created",
+      code: HttpCode.CREATED,
+      data: { ...newUser, isSendEmailVerify: isSend },
     });
+  } catch (err) {
+    next(err);
   }
-  const newUser = await authService.createUser(req.body);
-  res
-    .status(HttpCode.OK)
-    .json({ status: "created", code: HttpCode.CREATED, data: newUser });
 }
 
 async function loginUser(req, res, next) {

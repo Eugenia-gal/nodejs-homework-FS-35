@@ -5,10 +5,9 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 class AuthService {
   async createUser(body) {
-    const { id, name, email, subscription, avatarURL } = await Users.addUser(
-      body
-    );
-    return { id, name, email, subscription, avatarURL };
+    const { id, name, email, subscription, avatarURL, verificationToken } =
+      await Users.addUser(body);
+    return { id, name, email, subscription, avatarURL, verificationToken };
   }
 
   async isUserExist(email) {
@@ -19,7 +18,7 @@ class AuthService {
   async getUser(email, password) {
     const user = await Users.getUserByEmail(email);
     const isValidPassword = await user?.isValidPassword(password);
-    if (!isValidPassword) {
+    if (!isValidPassword || !user?.verify) {
       return null;
     }
     return user;

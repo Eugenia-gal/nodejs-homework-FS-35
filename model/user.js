@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import gravatar from "gravatar";
+import { v4 as uuidv4 } from "uuid";
 import { Role } from "../lib/constants.js";
 
 const { Schema, model } = mongoose;
@@ -40,6 +41,15 @@ const userSchema = new Schema(
         return gravatar.url(this.email, { s: "250" }, true);
       },
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: uuidv4,
+      required: [true, "Verify token is required"],
+    },
   },
   {
     versionKey: false,
@@ -54,8 +64,6 @@ const userSchema = new Schema(
     toObject: { virtuals: true },
   }
 );
-
-// TODO:
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
