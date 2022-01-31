@@ -4,6 +4,7 @@ import {
   UploadFileService,
   LocalFileStorage,
 } from "../../service/file-storage/index.js";
+import { EmailService, SenderSendGrid } from "../../service/email/index.js";
 
 const uploadAvatar = async (req, res, next) => {
   const uploadService = new UploadFileService(
@@ -36,6 +37,48 @@ const verifyUser = async (req, res, next) => {
   });
 };
 
-const repeatEmailForUserVerify = async (req, res, next) => {};
+const repeatEmailForUserVerify = async (req, res, next) => {
+  const user = await Users.getUserByEmail(req.body.email);
+  if (!user) {
+    return res.status(HttpCode.NOT_FOUND).json({
+      status: "Not Found",
+      code: HttpCode.NOT_FOUND,
+      data: { message: "User not found" },
+    });
+  }
+
+  if (user.verify) {
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: "Bad Request",
+      code: HttpCode.BAD_REQUEST,
+      data: { message: "Verification has already been passed" },
+    });
+  }
+
+  const { email, name, verificationToken } = user;
+  const emailService = new EmailService(
+    process.env.NODE_ENV,
+    new SenderSendGrid()
+  );
+
+  const isSend = await emailService.sendVerifyEmail(
+    email,
+    name,
+    verificationToken
+  );
+
+  if (isSend) {
+    return res.status(HttpCode.OK).json({
+      status: "Ok",
+      code: HttpCode.OK,
+      data: { message: "Verification email sent" },
+    });
+  }
+  res.status(HttpCode.UE).json({
+    status: "error",
+    code: HttpCode.UE,
+    data: { message: "Unprocessable Entity" },
+  });
+};
 
 export { uploadAvatar, verifyUser, repeatEmailForUserVerify };
